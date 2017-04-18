@@ -1,3 +1,6 @@
+"==============================================================================
+"                               Vim Bundle
+"==============================================================================
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -10,7 +13,7 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plugin 'junegunn/seoul256.vim'
 Plugin 'kien/ctrlp.vim'
 
 " All of your Plugins must be added before the following line
@@ -29,14 +32,39 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 "
 
+"==============================================================================
+"                              End of Vim Bundle
+"==============================================================================
+" * About the airline
+"   - Enable the list of buffers
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='distinguished'
+"   - Show just the filename
+let g:airline#extensions#tabline#fnamemod = ':t'
+
+
+" * About the vim theme
 set t_Co=256
 set term=xterm-256color
-set t_RV=
+colo seoul256
+syntax on
+" https://superuser.com/questions/399296/256-color-support-for-vim-background-in-tmux
+set t_ut= 
+
+" * About the CtrlP
+"   - Setup some default ignores
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
+  \ 'file': '\v\.(pyc|exe|so|dll|class|png|jpg|jpeg)$',
+\}
 
 
-" Shortcut for tabs
+" * Shortcut for tabs, and able to hidden
 map <C-h> :bp<CR>
 map <C-l> :bn<CR>
+set hidden
+
+" * Controlling the TABs
+set expandtab
+set shiftwidth=2
+set softtabstop=2
 
