@@ -68,3 +68,8 @@ set expandtab
 set shiftwidth=2
 set softtabstop=2
 
+" * Controlling the line length
+set cc=80
+
+" * Show the line number
+set number
