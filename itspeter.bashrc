@@ -5,6 +5,7 @@ alias la='ls -A'
 alias l='ls -CF'
 
 alias tmux='tmux -2'
+alias cscope='cscope -bqR'
 
 # Enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
