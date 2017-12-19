@@ -45,8 +45,16 @@ if [ "$ifconfig_grep" != "$expected_ifconfig_grep" ]; then
   echo "Need to set IP address to eth0"
   #echo "Got ...$ifconfig_grep" # Debug
   sudo ifconfig eth0 up 192.168.0.11
+
+  echo "Setup NAT for the eth0"
+  sudo sysctl -w net.ipv4.ip_forward=1
+  sudo iptables -P FORWARD ACCEPT
+  sudo iptables --table filter -I FORWARD -s 192.168.0.0/24 -j ACCEPT
+  sudo iptables --table nat -I POSTROUTING -s 192.168.0.0/24 -j MASQUERADE    
+
   echo "Restarting isc-dhcp-server"
-  sudo restart isc-dhcp-server
+  sudo stop isc-dhcp-server
+  sudo start isc-dhcp-server
 fi
 
 
