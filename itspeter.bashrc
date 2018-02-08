@@ -28,8 +28,9 @@ export EDITOR="$VISUAL"
 
 
 # Mount the working drive (SSD)
-mount_grep=`mount | grep --color=never /dev/sdb1 | tr -d '\n'`
-expected_mount_grep="/dev/sdb1 on /usr/local/google/home/itspeter/ssd1 type ext4 (rw)"
+mount_grep=`mount | grep --color=never /dev/sdb1 | tr -d '\n' | grep --color=never -o -e 'sdb1 on .*ssd1'`
+expected_mount_grep="sdb1 on /usr/local/google/home/itspeter/ssd1"
+
 if [ "$mount_grep" != "$expected_mount_grep" ]; then
   echo "Mounting the SSD drive"
   #echo "Got ...$mount_grep" # Debug
@@ -38,13 +39,13 @@ fi
 cd ~/ssd1/chromeos/src/platform/
 
 # Add the fixed IP if not found on ifconfig "inet addr:10.3.0.11  Bcast:10.255.255.255  Mask:255.0.0.0 "
-ifconfig_grep=`ifconfig | grep --color=never -A1 eth0 | tr -d '\n'`
-expected_ifconfig_grep="eth0      Link encap:Ethernet  HWaddr 48:0f:cf:44:41:ad            inet addr:192.168.0.11  Bcast:192.168.0.255  Mask:255.255.255.0"
+ifconfig_grep=`ifconfig | grep --color=never -A1 eth1 | tr -d '\n' | grep --color=never -o -e 'inet.*netmask'`
+expected_ifconfig_grep="inet 192.168.0.11  netmask"
 
 if [ "$ifconfig_grep" != "$expected_ifconfig_grep" ]; then
-  echo "Need to set IP address to eth0"
+  echo "Need to set IP address to eth1"
   #echo "Got ...$ifconfig_grep" # Debug
-  sudo ifconfig eth0 up 192.168.0.11
+  sudo ifconfig eth1 up 192.168.0.11
 
   echo "Setup NAT for the eth0"
   sudo sysctl -w net.ipv4.ip_forward=1
