@@ -27,16 +27,26 @@ export VISUAL='vim' # use 'gvim -f' if you want to use GUI vim.
 export EDITOR="$VISUAL"
 
 
-# Mount the working drive (SSD)
-mount_grep=`mount | grep --color=never /dev/sdb1 | tr -d '\n' | grep --color=never -o -e 'sdb1 on .*ssd1'`
-expected_mount_grep="sdb1 on /usr/local/google/home/itspeter/ssd1"
+# Mount the 500G SSD. There is another 500G partition not mounted.
+mount_grep=`mount | grep --color=never /dev/sdc1 | tr -d '\n' | grep --color=never -o -e 'sdc1 on .*ssd1'`
+expected_mount_grep="sdc1 on /usr/local/google/home/itspeter/ssd1"
 
 if [ "$mount_grep" != "$expected_mount_grep" ]; then
-  echo "Mounting the SSD drive"
+  echo "Mounting the SSD1(500G) drive"
   #echo "Got ...$mount_grep" # Debug
-  sudo mount /dev/sdb1 ~/ssd1;
+  sudo mount /dev/sdc1 ~/ssd1;
 fi
 cd ~/ssd1/chromeos/src/platform/
+
+# Mount the 2T SSD. There is another 2T partition not formatted
+mount_grep=`mount | grep --color=never /dev/sda1 | tr -d '\n' | grep --color=never -o -e 'sda1 on .*ssd2'`
+expected_mount_grep="sda1 on /usr/local/google/home/itspeter/ssd2"
+
+if [ "$mount_grep" != "$expected_mount_grep" ]; then
+  echo "Mounting the SSD2(2T) drive"
+  #echo "Got ...$mount_grep" # Debug
+  sudo mount -o nosuid /dev/sda1 ~/ssd2;
+fi
 
 # Add the fixed IP if not found on ifconfig "inet addr:10.3.0.11  Bcast:10.255.255.255  Mask:255.0.0.0 "
 ifconfig_grep=`ifconfig | grep --color=never -A1 eth1 | tr -d '\n' | grep --color=never -o -e 'inet.*netmask'`
@@ -54,8 +64,9 @@ if [ "$ifconfig_grep" != "$expected_ifconfig_grep" ]; then
   sudo iptables --table nat -I POSTROUTING -s 192.168.0.0/24 -j MASQUERADE    
 
   echo "Restarting isc-dhcp-server"
-  sudo stop isc-dhcp-server
-  sudo start isc-dhcp-server
+  sudo service isc-dhcp-server stop
+  sudo service isc-dhcp-server start
+  sudo service isc-dhcp-server status
 fi
 
 
