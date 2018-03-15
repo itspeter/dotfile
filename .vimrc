@@ -64,12 +64,44 @@ map <C-l> :bn<CR>
 set hidden
 
 " * Controlling the TABs
+set list
+set listchars=tab:>-     " > is shown at the beginning, - throughout
 set expandtab
 set shiftwidth=2
-set softtabstop=2
+set softtabstop=8
 
 " * Controlling the line length
 set cc=80
 
 " * Show the line number
 set number
+
+" * Search related
+set hlsearch  " Highlight
+set incsearch  " Show the next match while entering a search
+
+" * Experiment of deleting the default directory viewer - netrw
+"   autocmd FileType netrw setl bufhidden=wipe  #Doesn't work for me.
+"   src: https://github.com/tpope/vim-vinegar/issues/13
+" TODO(itspeter):  Other choice is to vim-vingear
+" Remove 'set hidden'
+set nohidden
+augroup netrw_buf_hidden_fix
+    autocmd!
+
+    " Set all non-netrw buffers to bufhidden=hide
+    autocmd BufWinEnter *
+                \  if &ft != 'netrw'
+                \|     set bufhidden=hide
+                \| endif
+
+augroup end
+
+
+" * Remove unwanted trailing spaces
+"   src: http://vim.wikia.com/wiki/Remove_unwanted_spaces
+autocmd FileType c,cc,cpp,h,py,java,php autocmd BufWritePre <buffer> %s/\s\+$//e
+
+" * Load cscope
+source ~/cscope_maps.vim
+
